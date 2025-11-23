@@ -13,6 +13,17 @@
     <br><br>
 
     <button type="submit">登入</button>
+
+    <?php
+    session_start();
+
+    if (isset($_SESSION['errors']['login'])) {
+        foreach ($_SESSION['errors']['login'] as $err) {
+            echo '<p style="color:red;">' . htmlspecialchars($err) . '</p>';
+        }
+        unset($_SESSION['errors']['login']); // 顯示完清除
+    }
+    ?>
 </form>
 
 <script>

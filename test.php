@@ -1,7 +1,11 @@
 <?php
+    session_start();
+    $errors = [];
+    
     $account = $_POST['account'];
     $password = $_POST['password'];
     $realname = $_POST['realname'];
+    
 
     // 後端再次驗證
     if (empty($account) || empty($password) || empty($realname)) {
@@ -29,27 +33,34 @@
     $stmt->bind_param("s", $account);
 
     if (!$stmt->execute()) {
-        die("資料庫查詢失敗: " . $stmt->error);
+        $errors[] = "資料庫查詢失敗: " . $stmt->error;
+        header("Location: index.php");
     }
 
     $result = $stmt->get_result();
 
-    // 帳號不存在
+    // 不會同時帳號不存在&密碼錯誤
     if ($result->num_rows === 0) {
-        die("帳號不存在");
+        $errors[] = "帳號不存在";
+    }else{
+        // 帳號存在
+        $user = $result->fetch_assoc();
+
+        // 檢查密碼是否正確
+        $hashed = hash('sha256', $password);
+        if ($hashed !== $user['password']) {
+            $errors[] = "密碼錯誤";
+        }
     }
     
-    // 帳號存在
-    $user = $result->fetch_assoc();
-
-    // 檢查密碼是否正確
-    $hashed = hash('sha256', $password);
-    if ($hashed !== $user['password']) {
-        die("密碼錯誤");
+    // 收集完錯誤才進行跳轉
+    if (!empty($errors)) {
+        $_SESSION['errors']['login'] = $errors;
+        header("Location: index.php");
+        exit();
     }
 
-    // 登入成功，建立 Session
-    session_start();
+    // 登入成功，建立 user Session
     $_SESSION['user'] = [
         'account' => $user['account'],
         'realname' => $user['realname']

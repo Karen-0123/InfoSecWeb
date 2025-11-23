@@ -1,11 +1,3 @@
-<?php
-session_start();
-if (!isset($_SESSION['user'])) {
-    header("Location: index.php");
-    exit();
-}
-?>
-
 <form method="POST" action="change_password_back.php" id="changePasswordForm">
     <h2>初次登入，請變更密碼</h2>
 
@@ -22,11 +14,16 @@ if (!isset($_SESSION['user'])) {
     <?php
     session_start();
 
-    if (isset($_SESSION['errors'])) {
-        foreach ($_SESSION['errors'] as $err) {
+    if (!isset($_SESSION['user'])) {
+        header("Location: index.php");
+        exit();
+    }
+
+    if (isset($_SESSION['errors']['changePassword'])) {
+        foreach ($_SESSION['errors']['changePassword'] as $err) {
             echo '<p style="color:red;">' . htmlspecialchars($err) . '</p>';
         }
-        unset($_SESSION['errors']); // 顯示完清除
+        unset($_SESSION['errors']['changePassword']); // 顯示完清除
     }
     ?>
 </form>
