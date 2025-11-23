@@ -1,4 +1,5 @@
 <?php
+
 // 連接資料庫
 $servername = "localhost";
 $dbuser  = "root";

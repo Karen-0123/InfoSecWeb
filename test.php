@@ -114,8 +114,6 @@
             $log->bind_param("ss", $account, $ip);
             $log->execute();
 
-
-
             // 建立 Session
             $_SESSION['user'] = [
                 'account' => $user['account'],
